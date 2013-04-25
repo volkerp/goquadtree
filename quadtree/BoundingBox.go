@@ -1,3 +1,8 @@
+/*
+Copyright 2013 Volker Poplawski
+*/
+
+
 package quadtree
 
 import "math"

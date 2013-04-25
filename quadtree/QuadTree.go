@@ -1,3 +1,8 @@
+/*
+Copyright 2013 Volker Poplawski
+*/
+
+// Package quadtree is a simple 2D implementation of the Quad-Tree data structure.
 package quadtree
 
 import _ "fmt"
