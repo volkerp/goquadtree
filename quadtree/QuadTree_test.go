@@ -24,7 +24,7 @@ func randomBoundingBoxes(n int, frame BoundingBox, avgSize float64) []BoundingBo
    
 
 // Returns all elements of data which intersect query
-func queryBruteForce(data []BoundingBox, query BoundingBox) (ret []BoundingBoxer) {
+func queryLinear(data []BoundingBox, query BoundingBox) (ret []BoundingBoxer) {
   for _, v := range data {
     if query.Intersects(v.BoundingBox()) {
       ret = append(ret, v)
@@ -79,7 +79,7 @@ func TestQuadTreeRects(t *testing.T) {
   queries := randomBoundingBoxes(1000, world, 10)
   
   for _, q := range queries {
-    r1 := queryBruteForce(rects, q)
+    r1 := queryLinear(rects, q)
     r2 := qt.Query(q)
     
     if len(r1) != len(r2) {
@@ -110,7 +110,7 @@ func TestQuadTreePoints(t *testing.T) {
   queries := randomBoundingBoxes(1000, world, 10)
   
   for _, q := range queries {
-    r1 := queryBruteForce(points, q)
+    r1 := queryLinear(points, q)
     r2 := qt.Query(q)
     
     if len(r1) != len(r2) {
@@ -148,7 +148,7 @@ func BenchmarkInsert(b *testing.B) {
 var boxes10M []BoundingBox = randomBoundingBoxes(10*1000*1000, world, 5)        
 
 // Benchmark quad-tree on set of rectangles
-func BenchmarkRectsQuery(b *testing.B) {
+func BenchmarkRectsQuadtree(b *testing.B) {
   b.StopTimer()
   rand.Seed(1)
   qt := NewQuadTree(world)
@@ -167,14 +167,14 @@ func BenchmarkRectsQuery(b *testing.B) {
 
 
 // Benchmark simple look up on set of rectangles
-func BenchmarkRectsBruteForce(b *testing.B) {
+func BenchmarkRectsLinear(b *testing.B) {
   b.StopTimer()
   rand.Seed(1)
   queries := randomBoundingBoxes(b.N, world, 10)
 
   b.StartTimer()
   for _, q := range queries {
-    queryBruteForce(boxes10M, q)
+    queryLinear(boxes10M, q)
   }
 }
    
@@ -183,7 +183,7 @@ func BenchmarkRectsBruteForce(b *testing.B) {
 var points10M []BoundingBox = randomBoundingBoxes(10*1000*1000, world, 0)        
 
 // Benchmark quad-tree on set of points
-func BenchmarkPointsQuery(b *testing.B) {
+func BenchmarkPointsQuadtree(b *testing.B) {
   b.StopTimer()
   rand.Seed(1)
   qt := NewQuadTree(world)
@@ -201,14 +201,14 @@ func BenchmarkPointsQuery(b *testing.B) {
 }
 
 
-// Benchmark simple look up on set of points
-func BenchmarkPointsBruteForce(b *testing.B) {
+// Benchmark simple look-up on set of points
+func BenchmarkPointsLinear(b *testing.B) {
   b.StopTimer()
   rand.Seed(1)
   queries := randomBoundingBoxes(b.N, world, 10)
 
   b.StartTimer()
   for _, q := range queries {
-    queryBruteForce(points10M, q)
+    queryLinear(points10M, q)
   }
 }
